@@ -29,14 +29,14 @@ function useModel() {
 
     if (apiKey || accessPassword) {
       const response = await fetch(
-        apiKeys.length > 0
+        apiKeys[0]
           ? `${
               apiProxy || "https://generativelanguage.googleapis.com"
             }/v1beta/models`
           : "/api/ai/google/v1beta/models",
         {
           headers: {
-            "x-goog-api-key": apiKeys.length > 0 ? apiKey[0] : accessPassword,
+            "x-goog-api-key": apiKeys[0] ? apiKeys[0] : accessPassword,
           },
         }
       );

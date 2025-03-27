@@ -28,7 +28,7 @@ Deep Research is a cutting-edge project built with Next.js 15, leveraging the po
 - **Research History:** Support preservation of research history, you can review previous research results at any time and conduct in-depth research again.
 - **Local & Server API Support:** Offers flexibility with both local and server-side API calling options to suit your needs.
 - **Privacy-Focused:** Your data remains private and secure, as all data is stored locally on your browser.
-- **Multi-key Support**: Support multi-key polling to improve API response efficiency.
+- **Support Multi-Key payload:** Support Multi-Key payload to improve API response efficiency.
 - **Multi-language Support**: English、简体中文.
 - **Built with Modern Technologies:** Developed using Next.js 15 and Shadcn UI, ensuring a modern, performant, and visually appealing user experience.
 - **MIT Licensed:** Open-source and freely available for personal and commercial use under the MIT License.

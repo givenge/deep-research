@@ -10,7 +10,7 @@ export function useModelProvider() {
 
     if (type === "google") {
       return createGoogleGenerativeAI(
-        apiKeys.length > 0
+        apiKeys[0]
           ? {
               baseURL: `${
                 apiProxy || "https://generativelanguage.googleapis.com"
