@@ -109,6 +109,7 @@
     "thinkingModel": "Thinking Model",
     "networkingModel": "Networking Model",
     "language": "Language",
+    "refresh": "Click Refresh Model",
     "save": "Save",
     "cancel": "Cancel"
   }
