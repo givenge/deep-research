@@ -242,6 +242,11 @@ function Setting({ open, onClose }: SettingProps) {
     update({ searchProvider });
   }
 
+  async function updateSetting(key: string, value?: string | number) {
+    update({ [key]: value });
+    await fetchModelList();
+  }
+
   function handleReset() {
     toast.warning(t("setting.resetSetting"), {
       description: t("setting.resetSettingWarning"),
@@ -412,9 +417,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  apiKey: form.getValues("apiKey"),
-                                })
+                                updateSetting(
+                                  "apiKey",
+                                  form.getValues("apiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -434,9 +440,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={GEMINI_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  apiProxy: form.getValues("apiProxy"),
-                                })
+                                updateSetting(
+                                  "apiProxy",
+                                  form.getValues("apiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -464,9 +471,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  apiProxy: form.getValues("apiProxy"),
-                                })
+                                updateSetting(
+                                  "openRouterApiKey",
+                                  form.getValues("openRouterApiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -486,9 +494,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={OPENROUTER_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  apiProxy: form.getValues("apiProxy"),
-                                })
+                                updateSetting(
+                                  "openRouterApiProxy",
+                                  form.getValues("openRouterApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -516,9 +525,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  openAIApiKey: form.getValues("openAIApiKey"),
-                                })
+                                updateSetting(
+                                  "openAIApiKey",
+                                  form.getValues("openAIApiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -538,10 +548,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={OPENAI_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  openAIApiProxy:
-                                    form.getValues("openAIApiProxy"),
-                                })
+                                updateSetting(
+                                  "openAIApiProxy",
+                                  form.getValues("openAIApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -569,10 +579,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  anthropicApiKey:
-                                    form.getValues("anthropicApiKey"),
-                                })
+                                updateSetting(
+                                  "anthropicApiKey",
+                                  form.getValues("anthropicApiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -592,10 +602,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={ANTHROPIC_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  anthropicApiProxy:
-                                    form.getValues("anthropicApiProxy"),
-                                })
+                                updateSetting(
+                                  "anthropicApiProxy",
+                                  form.getValues("anthropicApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -623,10 +633,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  deepseekApiKey:
-                                    form.getValues("deepseekApiKey"),
-                                })
+                                updateSetting(
+                                  "deepseekApiKey",
+                                  form.getValues("deepseekApiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -646,10 +656,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={DEEPSEEK_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  deepseekApiProxy:
-                                    form.getValues("deepseekApiProxy"),
-                                })
+                                updateSetting(
+                                  "deepseekApiProxy",
+                                  form.getValues("deepseekApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -677,9 +687,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  xAIApiKey: form.getValues("xAIApiKey"),
-                                })
+                                updateSetting(
+                                  "xAIApiKey",
+                                  form.getValues("xAIApiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -699,9 +710,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={XAI_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  xAIApiProxy: form.getValues("xAIApiProxy"),
-                                })
+                                updateSetting(
+                                  "xAIApiProxy",
+                                  form.getValues("xAIApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -729,11 +741,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiKeyPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  openAICompatibleApiKey: form.getValues(
-                                    "openAICompatibleApiKey"
-                                  ),
-                                })
+                                updateSetting(
+                                  "openAICompatibleApiKey",
+                                  form.getValues("openAICompatibleApiKey")
+                                )
                               }
                             />
                           </FormControl>
@@ -753,11 +764,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={t("setting.apiUrlPlaceholder")}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  openAICompatibleApiProxy: form.getValues(
-                                    "openAICompatibleApiProxy"
-                                  ),
-                                })
+                                updateSetting(
+                                  "openAICompatibleApiProxy",
+                                  form.getValues("openAICompatibleApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -783,10 +793,10 @@ function Setting({ open, onClose }: SettingProps) {
                               placeholder={OLLAMA_BASE_URL}
                               {...field}
                               onBlur={() =>
-                                update({
-                                  ollamaApiProxy:
-                                    form.getValues("ollamaApiProxy"),
-                                })
+                                updateSetting(
+                                  "ollamaApiProxy",
+                                  form.getValues("ollamaApiProxy")
+                                )
                               }
                             />
                           </FormControl>
@@ -815,10 +825,10 @@ function Setting({ open, onClose }: SettingProps) {
                             placeholder={t("setting.accessPasswordPlaceholder")}
                             {...field}
                             onBlur={() =>
-                              update({
-                                accessPassword:
-                                  form.getValues("accessPassword"),
-                              })
+                              updateSetting(
+                                "accessPassword",
+                                form.getValues("accessPassword")
+                              )
                             }
                           />
                         </FormControl>
@@ -1356,32 +1366,13 @@ function Setting({ open, onClose }: SettingProps) {
                                 />
                               </SelectTrigger>
                               <SelectContent className="max-sm:max-h-72">
-                                {thinkingModelList[0].length > 0 ? (
-                                  <SelectGroup>
-                                    <SelectLabel>
-                                      {t("setting.recommendedModels")}
-                                    </SelectLabel>
-                                    {thinkingModelList[0].map((name) => {
-                                      return !isDisabledAIModel(name) ? (
-                                        <SelectItem key={name} value={name}>
-                                          {convertModelName(name)}
-                                        </SelectItem>
-                                      ) : null;
-                                    })}
-                                  </SelectGroup>
-                                ) : null}
-                                <SelectGroup>
-                                  <SelectLabel>
-                                    {t("setting.basicModels")}
-                                  </SelectLabel>
-                                  {thinkingModelList[1].map((name) => {
-                                    return !isDisabledAIModel(name) ? (
-                                      <SelectItem key={name} value={name}>
-                                        {convertModelName(name)}
-                                      </SelectItem>
-                                    ) : null;
-                                  })}
-                                </SelectGroup>
+                                {modelList.map((name) => {
+                                  return !isDisabledAIModel(name) ? (
+                                    <SelectItem key={name} value={name}>
+                                      {convertModelName(name)}
+                                    </SelectItem>
+                                  ) : null;
+                                })}
                               </SelectContent>
                             </Select>
                             <Button
@@ -1436,32 +1427,13 @@ function Setting({ open, onClose }: SettingProps) {
                                 />
                               </SelectTrigger>
                               <SelectContent className="max-sm:max-h-72">
-                                {networkingModelList[0].length > 0 ? (
-                                  <SelectGroup>
-                                    <SelectLabel>
-                                      {t("setting.recommendedModels")}
-                                    </SelectLabel>
-                                    {networkingModelList[0].map((name) => {
-                                      return !isDisabledAIModel(name) ? (
-                                        <SelectItem key={name} value={name}>
-                                          {convertModelName(name)}
-                                        </SelectItem>
-                                      ) : null;
-                                    })}
-                                  </SelectGroup>
-                                ) : null}
-                                <SelectGroup>
-                                  <SelectLabel>
-                                    {t("setting.basicModels")}
-                                  </SelectLabel>
-                                  {networkingModelList[1].map((name) => {
-                                    return !isDisabledAIModel(name) ? (
-                                      <SelectItem key={name} value={name}>
-                                        {convertModelName(name)}
-                                      </SelectItem>
-                                    ) : null;
-                                  })}
-                                </SelectGroup>
+                                {modelList.map((name) => {
+                                  return !isDisabledAIModel(name) ? (
+                                    <SelectItem key={name} value={name}>
+                                      {convertModelName(name)}
+                                    </SelectItem>
+                                  ) : null;
+                                })}
                               </SelectContent>
                             </Select>
                             <Button
@@ -1688,32 +1660,13 @@ function Setting({ open, onClose }: SettingProps) {
                                 />
                               </SelectTrigger>
                               <SelectContent className="max-sm:max-h-72">
-                                {thinkingModelList[0].length > 0 ? (
-                                  <SelectGroup>
-                                    <SelectLabel>
-                                      {t("setting.recommendedModels")}
-                                    </SelectLabel>
-                                    {thinkingModelList[0].map((name) => {
-                                      return !isDisabledAIModel(name) ? (
-                                        <SelectItem key={name} value={name}>
-                                          {convertModelName(name)}
-                                        </SelectItem>
-                                      ) : null;
-                                    })}
-                                  </SelectGroup>
-                                ) : null}
-                                <SelectGroup>
-                                  <SelectLabel>
-                                    {t("setting.basicModels")}
-                                  </SelectLabel>
-                                  {thinkingModelList[1].map((name) => {
-                                    return !isDisabledAIModel(name) ? (
-                                      <SelectItem key={name} value={name}>
-                                        {convertModelName(name)}
-                                      </SelectItem>
-                                    ) : null;
-                                  })}
-                                </SelectGroup>
+                                {modelList.map((name) => {
+                                  return !isDisabledAIModel(name) ? (
+                                    <SelectItem key={name} value={name}>
+                                      {convertModelName(name)}
+                                    </SelectItem>
+                                  ) : null;
+                                })}
                               </SelectContent>
                             </Select>
                             <Button
@@ -1768,32 +1721,13 @@ function Setting({ open, onClose }: SettingProps) {
                                 />
                               </SelectTrigger>
                               <SelectContent className="max-sm:max-h-72">
-                                {networkingModelList[0].length > 0 ? (
-                                  <SelectGroup>
-                                    <SelectLabel>
-                                      {t("setting.recommendedModels")}
-                                    </SelectLabel>
-                                    {networkingModelList[0].map((name) => {
-                                      return !isDisabledAIModel(name) ? (
-                                        <SelectItem key={name} value={name}>
-                                          {convertModelName(name)}
-                                        </SelectItem>
-                                      ) : null;
-                                    })}
-                                  </SelectGroup>
-                                ) : null}
-                                <SelectGroup>
-                                  <SelectLabel>
-                                    {t("setting.basicModels")}
-                                  </SelectLabel>
-                                  {networkingModelList[1].map((name) => {
-                                    return !isDisabledAIModel(name) ? (
-                                      <SelectItem key={name} value={name}>
-                                        {convertModelName(name)}
-                                      </SelectItem>
-                                    ) : null;
-                                  })}
-                                </SelectGroup>
+                                {modelList.map((name) => {
+                                  return !isDisabledAIModel(name) ? (
+                                    <SelectItem key={name} value={name}>
+                                      {convertModelName(name)}
+                                    </SelectItem>
+                                  ) : null;
+                                })}
                               </SelectContent>
                             </Select>
                             <Button
@@ -1862,7 +1796,7 @@ function Setting({ open, onClose }: SettingProps) {
                                   />
                                 </SelectTrigger>
                                 <SelectContent className="max-sm:max-h-72">
-                                  {thinkingModelList[1].map((name) => {
+                                  {modelList.map((name) => {
                                     return !isDisabledAIModel(name) ? (
                                       <SelectItem key={name} value={name}>
                                         {convertModelName(name)}
@@ -1923,7 +1857,7 @@ function Setting({ open, onClose }: SettingProps) {
                                   />
                                 </SelectTrigger>
                                 <SelectContent className="max-sm:max-h-72">
-                                  {networkingModelList[1].map((name) => {
+                                  {modelList.map((name) => {
                                     return !isDisabledAIModel(name) ? (
                                       <SelectItem key={name} value={name}>
                                         {convertModelName(name)}
@@ -1964,11 +1898,54 @@ function Setting({ open, onClose }: SettingProps) {
                           {t("setting.thinkingModel")}
                           <span className="ml-1 text-red-500">*</span>
                         </FormLabel>
-                        <FormControl className="col-span-3 w-full">
-                          <Input
-                            placeholder={t("setting.modelListPlaceholder")}
-                            {...field}
-                          />
+                        <FormControl>
+                          <div className="col-span-3 w-full">
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger
+                                className={cn({
+                                  hidden: modelList.length === 0,
+                                })}
+                              >
+                                <SelectValue
+                                  placeholder={t(
+                                    "setting.modelListLoadingPlaceholder"
+                                  )}
+                                />
+                              </SelectTrigger>
+                              <SelectContent className="max-sm:max-h-72">
+                                {modelList.map((name) => {
+                                  return !isDisabledAIModel(name) ? (
+                                    <SelectItem key={name} value={name}>
+                                      {convertModelName(name)}
+                                    </SelectItem>
+                                  ) : null;
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              className={cn("w-full", {
+                                hidden: modelList.length > 0,
+                              })}
+                              type="button"
+                              variant="outline"
+                              disabled={isRefreshing}
+                              onClick={() => fetchModelList()}
+                            >
+                              {isRefreshing ? (
+                                <>
+                                  <RefreshCw className="animate-spin" />{" "}
+                                  {t("setting.modelListLoading")}
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw /> {t("setting.refresh")}
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         </FormControl>
                       </FormItem>
                     )}
@@ -1982,11 +1959,54 @@ function Setting({ open, onClose }: SettingProps) {
                           {t("setting.networkingModel")}
                           <span className="ml-1 text-red-500">*</span>
                         </FormLabel>
-                        <FormControl className="col-span-3 w-full">
-                          <Input
-                            placeholder={t("setting.modelListPlaceholder")}
-                            {...field}
-                          />
+                        <FormControl>
+                          <div className="col-span-3 w-full">
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger
+                                className={cn({
+                                  hidden: modelList.length === 0,
+                                })}
+                              >
+                                <SelectValue
+                                  placeholder={t(
+                                    "setting.modelListLoadingPlaceholder"
+                                  )}
+                                />
+                              </SelectTrigger>
+                              <SelectContent className="max-sm:max-h-72">
+                                {modelList.map((name) => {
+                                  return !isDisabledAIModel(name) ? (
+                                    <SelectItem key={name} value={name}>
+                                      {convertModelName(name)}
+                                    </SelectItem>
+                                  ) : null;
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              className={cn("w-full", {
+                                hidden: modelList.length > 0,
+                              })}
+                              type="button"
+                              variant="outline"
+                              disabled={isRefreshing}
+                              onClick={() => fetchModelList()}
+                            >
+                              {isRefreshing ? (
+                                <>
+                                  <RefreshCw className="animate-spin" />{" "}
+                                  {t("setting.modelListLoading")}
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw /> {t("setting.refresh")}
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         </FormControl>
                       </FormItem>
                     )}
@@ -2060,7 +2080,7 @@ function Setting({ open, onClose }: SettingProps) {
                                 {t("setting.bocha")}
                               </SelectItem>
                             ) : null}
-                            {!isDisabledSearchProvider("bocha") ? (
+                            {!isDisabledSearchProvider("searxng") ? (
                               <SelectItem value="searxng">SearXNG</SelectItem>
                             ) : null}
                           </SelectContent>

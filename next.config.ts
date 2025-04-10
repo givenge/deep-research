@@ -17,7 +17,7 @@ const DEEPSEEK_API_BASE_URL =
   process.env.DEEPSEEK_API_BASE_URL || "https://api.deepseek.com";
 const XAI_API_BASE_URL = process.env.XAI_API_BASE_URL || "https://api.x.ai";
 const OLLAMA_API_BASE_URL =
-  process.env.OLLAMA_API_BASE_URL || "http://localhost:11434";
+  process.env.OLLAMA_API_BASE_URL || "http://0.0.0.0:11434";
 const OPENAI_COMPATIBLE_API_BASE_URL =
   process.env.OPENAI_COMPATIBLE_API_BASE_URL || "";
 // Search provider API base url
@@ -28,7 +28,7 @@ const FIRECRAWL_API_BASE_URL =
 const BOCHA_API_BASE_URL =
   process.env.BOCHA_API_BASE_URL || "https://api.bochaai.com";
 const SEARXNG_API_BASE_URL =
-  process.env.SEARXNG_API_BASE_URL || "http://localhost:8080";
+  process.env.SEARXNG_API_BASE_URL || "http://0.0.0.0:8080";
 
 const nextConfig: NextConfig = {
   /* config options here */
