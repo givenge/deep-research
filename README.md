@@ -16,15 +16,15 @@
 
 **Lightning-Fast Deep Research Report**
 
-Deep Research is a cutting-edge project built with Next.js 15, leveraging the power of AI models to generate in-depth research reports in approximately 2 minutes. Utilizing advanced "Thinking" and "Flash" models with internet access, Deep Research provides rapid and insightful analysis on a wide range of topics. Your privacy is paramount – all data is processed and stored locally.
+Deep Research uses a variety of powerful AI models to generate in-depth research reports in just a few minutes. It leverages advanced "Thinking" and "Flash" models, combined with an internet connection, to provide fast and insightful analysis on a variety of topics. **Your privacy is paramount - all data is processed and stored locally.**
 
 ## ✨ Features
 
 - **Rapid Deep Research:** Generates comprehensive research reports in about 2 minutes, significantly accelerating your research process.
 - **Multi-platform Support:** Supports rapid deployment to Vercel, Cloudflare and other platforms.
 - **Powered by AI:** Utilizes the advanced AI models for accurate and insightful analysis.
-- **Support for Multi-LLM:** Supports a variety of mainstream large language models, including Gemini, OpenAI, Anthropic, Deepseek, Grok, etc.
-- **Support Web Search:** Supports search engines such as Searxng, Tavily, Firecrawl, Bocha, etc., allowing LLMs that do not support search to use the web search function more conveniently.
+- **Support for Multi-LLM:** Supports a variety of mainstream large language models, including Gemini, OpenAI, Anthropic, Deepseek, Grok, OpenAI Compatible, OpenRouter, Ollama, etc.
+- **Support Web Search:** Supports search engines such as Searxng, Tavily, Firecrawl, Exa, Bocha, etc., allowing LLMs that do not support search to use the web search function more conveniently.
 - **Thinking & Networking Models:** Employs sophisticated "Thinking" and "Networking" models to balance depth and speed, ensuring high-quality results quickly. Support switching research models.
 - **Artifact** Supports editing of research content, with two editing modes: WYSIWYM and Markdown. It is possible to adjust the reading level, article length and full text translation.
 - **Research History:** Support preservation of research history, you can review previous research results at any time and conduct in-depth research again.
@@ -44,7 +44,7 @@ Deep Research is a cutting-edge project built with Next.js 15, leveraging the po
 
 ## 🚀 Getting Started
 
-### Use Gemini
+### Use Free Gemini (recommend)
 
 1. Get [Gemini API Key](https://aistudio.google.com/app/apikey)
 2. One-click deployment of the project, you can choose to deploy to Vercel or Cloudflare
@@ -130,8 +130,8 @@ You can also specify additional environment variables:
 ```bash
 docker run -d --name deep-research \
    -p 3333:3000 \
-   -e GOOGLE_GENERATIVE_AI_API_KEY=AIzaSy... \
    -e ACCESS_PASSWORD=your-password \
+   -e GOOGLE_GENERATIVE_AI_API_KEY=AIzaSy... \
    xiangfa/deep-research
 ```
 
@@ -153,8 +153,8 @@ services:
       image: xiangfa/deep-research
       container_name: deep-research
       environment:
-         - GOOGLE_GENERATIVE_AI_API_KEY=AIzaSy...
          - ACCESS_PASSWORD=your-password
+         - GOOGLE_GENERATIVE_AI_API_KEY=AIzaSy...
       ports:
          - 3333:3000
 ```
@@ -193,10 +193,6 @@ Please refer to the file `env.tpl` for all available environment variables.
 
 Deep Research is designed with your privacy in mind. **All research data and generated reports are stored locally on your machine.** We do not collect or transmit any of your research data to external servers (unless you are explicitly using server-side API calls, in which case data is sent to Google's Gemini API through your configured proxy if any). Your privacy is our priority.
 
-## 📝 License
-
-Deep Research is released under the [MIT License](LICENSE). This license allows for free use, modification, and distribution for both commercial and non-commercial purposes.
-
 ## 🙏 Acknowledgements
 
 - [Next.js](https://nextjs.org/) - The React framework for building performant web applications.
@@ -218,3 +214,7 @@ For major changes, please open an issue first to discuss your proposed changes.
 ## ✉️ Contact
 
 If you have any questions, suggestions, or feedback, please create a new [issue](https://github.com/u14app/deep-research/issues).
+
+## 📝 License
+
+Deep Research is released under the [MIT License](LICENSE). This license allows for free use, modification, and distribution for both commercial and non-commercial purposes.

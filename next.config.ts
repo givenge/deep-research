@@ -25,6 +25,7 @@ const TAVILY_API_BASE_URL =
   process.env.TAVILY_API_BASE_URL || "https://api.tavily.com";
 const FIRECRAWL_API_BASE_URL =
   process.env.FIRECRAWL_API_BASE_URL || "https://api.firecrawl.dev";
+const EXA_API_BASE_URL = process.env.EXA_API_BASE_URL || "https://api.exa.ai";
 const BOCHA_API_BASE_URL =
   process.env.BOCHA_API_BASE_URL || "https://api.bochaai.com";
 const SEARXNG_API_BASE_URL =
@@ -47,11 +48,17 @@ if (BUILD_MODE === "export") {
   // Statically exporting a Next.js application via `next export` disables API routes and middleware.
   nextConfig.webpack = (config) => {
     config.module.rules.push({
+      test: /src\/app\/api/,
+      loader: "ignore-loader",
+    });
+    config.module.rules.push({
       test: /src\/middleware/,
       loader: "ignore-loader",
     });
     return config;
   };
+} else if (BUILD_MODE === "standalone") {
+  nextConfig.output = "standalone";
 } else {
   nextConfig.rewrites = async () => {
     return [
@@ -98,6 +105,10 @@ if (BUILD_MODE === "export") {
         destination: `${FIRECRAWL_API_BASE_URL}/:path*`,
       },
       {
+        source: "/api/search/exa/:path*",
+        destination: `${EXA_API_BASE_URL}/:path*`,
+      },
+      {
         source: "/api/search/bocha/:path*",
         destination: `${BOCHA_API_BASE_URL}/:path*`,
       },
@@ -107,10 +118,6 @@ if (BUILD_MODE === "export") {
       },
     ];
   };
-}
-
-if (BUILD_MODE === "standalone") {
-  nextConfig.output = "standalone";
 }
 
 export default nextConfig;

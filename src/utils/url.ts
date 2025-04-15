@@ -23,6 +23,10 @@ export function completePath(url: string, newPath?: string) {
       pathname += newPath;
     }
 
+    if (pathname === "") {
+      return urlObj.origin;
+    }
+
     // Update pathname
     urlObj.pathname = pathname;
     return urlObj.toString();

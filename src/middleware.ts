@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import { getCustomModelList } from "@/utils/models";
-import { isEqual, shuffle } from "radash";
+import { getCustomModelList, multiApiKeyPolling } from "@/utils/model";
+import { verifySignature } from "@/utils/signature";
 
+const NODE_ENV = process.env.NODE_ENV;
 const accessPassword = process.env.ACCESS_PASSWORD || "";
 // AI provider API key
 const GOOGLE_GENERATIVE_AI_API_KEY =
@@ -16,6 +17,7 @@ const OPENAI_COMPATIBLE_API_KEY = process.env.OPENAI_COMPATIBLE_API_KEY || "";
 // Search provider API key
 const TAVILY_API_KEY = process.env.TAVILY_API_KEY || "";
 const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY || "";
+const EXA_API_KEY = process.env.EXA_API_KEY || "";
 const BOCHA_API_KEY = process.env.BOCHA_API_KEY || "";
 // Disabled Provider
 const DISABLED_AI_PROVIDER = process.env.NEXT_PUBLIC_DISABLED_AI_PROVIDER || "";
@@ -42,6 +44,8 @@ const ERRORS = {
 };
 
 export async function middleware(request: NextRequest) {
+  if (NODE_ENV === "production") console.debug(request);
+
   const disabledAIProviders =
     DISABLED_AI_PROVIDER.length > 0 ? DISABLED_AI_PROVIDER.split(",") : [];
   const disabledSearchProviders =
@@ -78,11 +82,10 @@ export async function middleware(request: NextRequest) {
   };
 
   if (request.nextUrl.pathname.startsWith("/api/ai/google")) {
-    const authorization = request.headers.get("x-goog-api-key");
+    const authorization = request.headers.get("x-goog-api-key") || "";
     const isDisabledGeminiModel = hasDisabledGeminiModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== accessPassword ||
+      !verifySignature(authorization, accessPassword, Date.now()) ||
       disabledAIProviders.includes("google") ||
       isDisabledGeminiModel
     ) {
@@ -91,9 +94,8 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(GOOGLE_GENERATIVE_AI_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(GOOGLE_GENERATIVE_AI_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
@@ -103,7 +105,7 @@ export async function middleware(request: NextRequest) {
           "x-goog-api-client",
           request.headers.get("x-goog-api-client") || "genai-js/0.24.0"
         );
-        requestHeaders.set("x-goog-api-key", apiKeys[0]);
+        requestHeaders.set("x-goog-api-key", apiKey);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -120,11 +122,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/ai/openrouter")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     const isDisabledModel = await hasDisabledAIModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledAIProviders.includes("openrouter") ||
       isDisabledModel
     ) {
@@ -133,15 +138,54 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(OPENROUTER_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(OPENROUTER_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
+        return NextResponse.next({
+          request: {
+            headers: requestHeaders,
+          },
+        });
+      } else {
+        return NextResponse.json(
+          {
+            error: ERRORS.NO_API_KEY,
+          },
+          { status: 500 }
+        );
+      }
+    }
+  }
+  if (request.nextUrl.pathname.startsWith("/api/ai/openaicompatible")) {
+    const authorization = request.headers.get("authorization") || "";
+    const isDisabledModel = await hasDisabledAIModel();
+    if (
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
+      disabledAIProviders.includes("openaicompatible") ||
+      isDisabledModel
+    ) {
+      return NextResponse.json(
+        { error: ERRORS.NO_PERMISSIONS },
+        { status: 403 }
+      );
+    } else {
+      const apiKey = multiApiKeyPolling(OPENAI_COMPATIBLE_API_KEY);
+      if (apiKey) {
+        const requestHeaders = new Headers();
+        requestHeaders.set(
+          "Content-Type",
+          request.headers.get("Content-Type") || "application/json"
+        );
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -158,11 +202,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/ai/openai")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     const isDisabledModel = await hasDisabledAIModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledAIProviders.includes("openai") ||
       isDisabledModel
     ) {
@@ -171,15 +218,14 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(OPENAI_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(OPENAI_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -196,11 +242,10 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/ai/anthropic")) {
-    const authorization = request.headers.get("x-api-key");
+    const authorization = request.headers.get("x-api-key") || "";
     const isDisabledModel = await hasDisabledAIModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== accessPassword ||
+      !verifySignature(authorization, accessPassword, Date.now()) ||
       disabledAIProviders.includes("anthropic") ||
       isDisabledModel
     ) {
@@ -209,15 +254,14 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(ANTHROPIC_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(ANTHROPIC_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("x-api-key", apiKeys[0]);
+        requestHeaders.set("x-api-key", apiKey);
         requestHeaders.set(
           "anthropic-version",
           request.headers.get("anthropic-version") || "2023-06-01"
@@ -238,11 +282,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/ai/deepseek")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     const isDisabledModel = await hasDisabledAIModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledAIProviders.includes("deepseek") ||
       isDisabledModel
     ) {
@@ -251,15 +298,14 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(DEEPSEEK_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(DEEPSEEK_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -276,11 +322,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/ai/xai")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     const isDisabledModel = await hasDisabledAIModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledAIProviders.includes("xai") ||
       isDisabledModel
     ) {
@@ -289,53 +338,14 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(XAI_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(XAI_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
-        return NextResponse.next({
-          request: {
-            headers: requestHeaders,
-          },
-        });
-      } else {
-        return NextResponse.json(
-          {
-            error: ERRORS.NO_API_KEY,
-          },
-          { status: 500 }
-        );
-      }
-    }
-  }
-  if (request.nextUrl.pathname.startsWith("/api/ai/openaicompatible")) {
-    const authorization = request.headers.get("authorization");
-    const isDisabledModel = await hasDisabledAIModel();
-    if (
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
-      disabledAIProviders.includes("openaicompatible") ||
-      isDisabledModel
-    ) {
-      return NextResponse.json(
-        { error: ERRORS.NO_PERMISSIONS },
-        { status: 403 }
-      );
-    } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(OPENAI_COMPATIBLE_API_KEY.split(","));
-      if (apiKeys[0]) {
-        const requestHeaders = new Headers();
-        requestHeaders.set(
-          "Content-Type",
-          request.headers.get("Content-Type") || "application/json"
-        );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -353,11 +363,14 @@ export async function middleware(request: NextRequest) {
   }
   // The ollama model only verifies access to the backend API
   if (request.nextUrl.pathname.startsWith("/api/ai/ollama")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     const isDisabledModel = await hasDisabledAIModel();
     if (
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledAIProviders.includes("ollama") ||
       isDisabledModel
     ) {
@@ -379,11 +392,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/search/tavily")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     if (
       request.method.toUpperCase() !== "POST" ||
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledSearchProviders.includes("tavily")
     ) {
       return NextResponse.json(
@@ -391,15 +407,14 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(TAVILY_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(TAVILY_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -416,11 +431,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/search/firecrawl")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     if (
       request.method.toUpperCase() !== "POST" ||
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledSearchProviders.includes("firecrawl")
     ) {
       return NextResponse.json(
@@ -428,15 +446,53 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(FIRECRAWL_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(FIRECRAWL_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
+        return NextResponse.next({
+          request: {
+            headers: requestHeaders,
+          },
+        });
+      } else {
+        return NextResponse.json(
+          {
+            error: ERRORS.NO_API_KEY,
+          },
+          { status: 500 }
+        );
+      }
+    }
+  }
+  if (request.nextUrl.pathname.startsWith("/api/search/exa")) {
+    const authorization = request.headers.get("authorization") || "";
+    if (
+      request.method.toUpperCase() !== "POST" ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
+      disabledSearchProviders.includes("exa")
+    ) {
+      return NextResponse.json(
+        { error: ERRORS.NO_PERMISSIONS },
+        { status: 403 }
+      );
+    } else {
+      const apiKey = multiApiKeyPolling(EXA_API_KEY);
+      if (apiKey) {
+        const requestHeaders = new Headers();
+        requestHeaders.set(
+          "Content-Type",
+          request.headers.get("Content-Type") || "application/json"
+        );
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -453,11 +509,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/search/bocha")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     if (
       request.method.toUpperCase() !== "POST" ||
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledSearchProviders.includes("bocha")
     ) {
       return NextResponse.json(
@@ -465,15 +524,14 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Support multi-key polling,
-      const apiKeys = shuffle(BOCHA_API_KEY.split(","));
-      if (apiKeys[0]) {
+      const apiKey = multiApiKeyPolling(BOCHA_API_KEY);
+      if (apiKey) {
         const requestHeaders = new Headers();
         requestHeaders.set(
           "Content-Type",
           request.headers.get("Content-Type") || "application/json"
         );
-        requestHeaders.set("Authorization", `Bearer ${apiKeys[0]}`);
+        requestHeaders.set("Authorization", `Bearer ${apiKey}`);
         return NextResponse.next({
           request: {
             headers: requestHeaders,
@@ -490,11 +548,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/api/search/searxng")) {
-    const authorization = request.headers.get("authorization");
+    const authorization = request.headers.get("authorization") || "";
     if (
       request.method.toUpperCase() !== "POST" ||
-      isEqual(authorization, null) ||
-      authorization !== `Bearer ${accessPassword}` ||
+      !verifySignature(
+        authorization.substring(7),
+        accessPassword,
+        Date.now()
+      ) ||
       disabledSearchProviders.includes("searxng")
     ) {
       return NextResponse.json(
