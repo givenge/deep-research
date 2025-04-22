@@ -30,6 +30,9 @@ export interface SettingStore {
   openAICompatibleApiProxy: string;
   openAICompatibleThinkingModel: string;
   openAICompatibleNetworkingModel: string;
+  pollinationsApiProxy: string;
+  pollinationsThinkingModel: string;
+  pollinationsNetworkingModel: string;
   ollamaApiProxy: string;
   ollamaThinkingModel: string;
   ollamaNetworkingModel: string;
@@ -51,6 +54,7 @@ export interface SettingStore {
   searchMaxResult: number;
   language: string;
   theme: string;
+  debug: string;
 }
 
 interface SettingFunction {
@@ -89,6 +93,9 @@ export const defaultValues: SettingStore = {
   openAICompatibleApiProxy: "",
   openAICompatibleThinkingModel: "",
   openAICompatibleNetworkingModel: "",
+  pollinationsApiProxy: "",
+  pollinationsThinkingModel: "",
+  pollinationsNetworkingModel: "",
   ollamaApiProxy: "",
   ollamaThinkingModel: "",
   ollamaNetworkingModel: "",
@@ -108,6 +115,7 @@ export const defaultValues: SettingStore = {
   searchMaxResult: 5,
   language: "",
   theme: "system",
+  debug: "disable",
 };
 
 export const useSettingStore = create(

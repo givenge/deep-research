@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import ThemeProvider from "@/components/Provider/Theme";
 import I18Provider from "@/components/Provider/I18n";
+import Debugger from "@/components/Debugger";
 import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
@@ -10,7 +11,7 @@ const HEAD_SCRIPTS = process.env.HEAD_SCRIPTS as string;
 
 export const metadata: Metadata = {
   title: "Deep Research",
-  description: "Deep Rssearch with Google Gemini Models",
+  description: "Use any LLMs (Large Language Models) for Deep Research.",
   icons: {
     icon: {
       type: "image/svg+xml",
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en" dir="auto" suppressHydrationWarning>
       <head>
         {HEAD_SCRIPTS ? <Script id="headscript">{HEAD_SCRIPTS}</Script> : null}
+        <Debugger />
       </head>
       <body className="antialiased">
         <ThemeProvider

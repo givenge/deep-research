@@ -78,13 +78,34 @@ export function filterOpenAIModelList(modelList: string[]) {
   const networkingModelList: string[] = [];
   const nonNetworkingModelList: string[] = [];
   modelList.filter((model) => {
-    if (model.startsWith("gpt-4o")) {
+    if (
+      model.startsWith("gpt-4o") ||
+      model.startsWith("gpt-4.1") ||
+      !model.includes("nano")
+    ) {
       networkingModelList.push(model);
     } else {
       nonNetworkingModelList.push(model);
     }
   });
   return [networkingModelList, nonNetworkingModelList];
+}
+
+export function filterPollinationsModelList(modelList: string[]) {
+  const recommendModelList: string[] = [];
+  const normalModelList: string[] = [];
+  modelList.filter((model) => {
+    if (
+      model.startsWith("openai") ||
+      model.startsWith("deepseek") ||
+      model.startsWith("searchgpt")
+    ) {
+      recommendModelList.push(model);
+    } else {
+      normalModelList.push(model);
+    }
+  });
+  return [recommendModelList, normalModelList];
 }
 
 export function getCustomModelList(customModelList: string[]) {
