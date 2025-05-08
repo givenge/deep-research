@@ -5,7 +5,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/u14app/deep-research)
 ![Docker Image Size](https://img.shields.io/docker/image-size/xiangfa/deep-research/latest)
 ![Docker Pulls](https://img.shields.io/docker/pulls/xiangfa/deep-research)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-default.svg)](https://opensource.org/licenses/MIT)
 
 [![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=flat&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 [![Next](https://img.shields.io/badge/Next.js-111111?style=flat&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
